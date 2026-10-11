@@ -117,6 +117,10 @@
         .who { margin: 0 0 6px; font-weight: 800; color: #047857; }
         .station h2, .q-text, .feedback, #next-btn { scroll-margin-top: 196px; }
         .station h2 { margin: 0; font-size: 30px; line-height: 1.25; }
+        .scene-art {
+            display: block; width: 100%; height: auto; margin: 14px 0 0;
+            border-radius: 18px; object-fit: cover;
+        }
         .narrator { margin: 14px 0 0; font-size: 14px; font-weight: 800; letter-spacing: 0.04em; color: #b45309; }
         .story { margin: 4px 0 0; font-size: 18px; }
         .badge {
@@ -351,6 +355,7 @@
         // 男／女不會抽到另一性別的腰圍或好膽固醇切點。
         const BEATS = [
             {
+                image: "assets/station-1-fork.jpg",
                 titleZh: "第一站・腰圍岔路",
                 titleEn: "Station 1 · The fork",
                 storyZh: "小腰果站在分岔口。一邊是陽光步道，一邊是愈坐愈沉的沙發。大腰果指著腰間的皮帶，也指著五項指標的路牌：這條人生，常常從這裡開始分叉。",
@@ -362,6 +367,7 @@
                 pool: [1, 2, 3, 23, 16, 10, 6, 5, 7, 8, 9]
             },
             {
+                image: "assets/station-2-table.jpg",
                 titleZh: "第二站・餐桌",
                 titleEn: "Station 2 · The table",
                 storyZh: "便利商店和餐桌都在這一站。大腰果把選擇放在你面前：喝什麼、吃什麼、鹽和油放多少，腳步就會跟著偏。",
@@ -373,6 +379,7 @@
                 pool: [13, 18, 22, 24, 25, 14, 15, 40]
             },
             {
+                image: "assets/station-3-stairs.jpg",
                 titleZh: "第三站・抬起腳",
                 titleEn: "Station 3 · Take a step",
                 storyZh: "電梯旁邊就是樓梯，路上也有健檢站的箭頭。大腰果已經先走了兩階：動不動、查不查，會決定後面還看不看得到大路。",
@@ -384,6 +391,7 @@
                 pool: [12, 21, 17, 19, 20]
             },
             {
+                image: "assets/station-4-bridge.jpg",
                 titleZh: "第四站・通往腎臟的橋",
                 titleEn: "Station 4 · The bridge",
                 storyZh: "前面有一座橋，橋下是左右兩顆腎臟。大腰果放輕聲音：若血糖和血壓一直不被理會，故事會從這座橋走往下半場。先認識它，才保護得了它。",
@@ -395,6 +403,7 @@
                 pool: [39, 47, 33, 48, 11, 4, 26, 49]
             },
             {
+                image: "assets/station-5-door.jpg",
                 titleZh: "第五站・回頭的門",
                 titleEn: "Station 5 · The open door",
                 storyZh: "最後一站不是牆，是一扇還開著的門。門上寫著泡、水、高、貧、倦，也寫著抽血、驗尿、問醫師。大腰果扶著門把：早一點推開，下半場就還改得了。",
@@ -554,6 +563,7 @@
             document.getElementById("station").innerHTML =
                 '<p class="who">' + escapeHtml(userInfo.surname + " " + personTitle()) + " · 第 " + (stepIndex + 1) + " / 5 站</p>" +
                 '<h2 id="station-title" tabindex="-1">' + escapeHtml(beat.titleZh) + '<span class="en">' + escapeHtml(beat.titleEn) + '</span></h2>' +
+                '<img class="scene-art" src="' + escapeHtml(beat.image) + '" alt="' + escapeHtml(beat.titleZh) + '">' +
                 '<p class="narrator">大腰果</p>' +
                 '<p class="story">' + escapeHtml(beat.storyZh) + '<span class="en">' + escapeHtml(beat.storyEn) + '</span></p>' +
                 '<span class="badge">' + categoryLabel(q.category) + '</span>' +
