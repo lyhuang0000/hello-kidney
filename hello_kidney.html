@@ -176,6 +176,11 @@
             margin-top: 14px; padding: 12px 14px; border-radius: 14px; background: #fffbeb; color: #78350f; font-size: 16px;
         }
         .save-note { background: #ecfdf5; color: #065f46; }
+        .other-endings { margin-top: 18px; }
+        .other-endings h3 { margin: 0 4px 10px; font-size: 22px; }
+        .other-card { padding: 12px; margin-bottom: 12px; }
+        .other-card img { margin: 0; }
+        .other-card p { margin: 8px 0 0; font-weight: 800; font-size: 18px; }
         .review-title { margin: 22px 4px 12px; font-size: 26px; }
         .review {
             padding: 16px; border-radius: 18px; margin-bottom: 12px; background: #fff; border: 2px solid #e5e7eb;
@@ -772,10 +777,17 @@
                 return "<li>" + escapeHtml(tip[0]) + '<span class="en">' + escapeHtml(tip[1]) + "</span></li>";
             }).join("");
             const okSteps = result.marks.filter(function (mark) { return mark === "ok"; }).length;
+            const others = ["healthy", "metabolic", "kidney"].filter(function (key) { return key !== endingKey; });
+            const otherCards = others.map(function (key) {
+                return '<article class="other-card card">' +
+                    '<img class="scene-art" src="' + escapeHtml(ENDING_IMAGE[key]) + '" alt="' + escapeHtml(titles[key][0]) + '">' +
+                    '<p>' + escapeHtml(ENDING_LABEL[key]) + '<span class="en">' + escapeHtml(titles[key][1]) + '</span></p>' +
+                "</article>";
+            }).join("");
             document.getElementById("ending").innerHTML =
                 '<article class="ending ending-' + endingKey + ' card">' +
                     '<img class="scene-art" src="' + escapeHtml(ENDING_IMAGE[endingKey]) + '" alt="' + escapeHtml(titles[endingKey][0]) + '">' +
-                    '<p class="end-kicker">旅程終點 / The ending</p>' +
+                    '<p class="end-kicker">你走到的終點 / Your ending</p>' +
                     "<h2>" + titles[endingKey][0] + '<span class="en">' + titles[endingKey][1] + "</span></h2>" +
                     "<p><strong>" + escapeHtml(userInfo.surname + " " + personTitle()) + "</strong> / " + personTitleEn() + " " + escapeHtml(userInfo.surname) + "</p>" +
                     '<p class="score-line"><span>' + result.score + '</span> 分 / pts · 答對 ' + (okSteps) + " / 5</p>" +
@@ -784,7 +796,11 @@
                     '<ul class="tips">' + tips + "</ul>" +
                     '<p class="disclaimer">這是衛教故事，不是診斷，也不能取代就醫。若已有泡泡尿、水腫、血壓或血糖異常，請依醫師的安排追蹤。<span class="en">This is a health-education story, not a diagnosis. If you already have warning signs, follow your doctor’s plan.</span></p>' +
                     '<p class="save-note">' + note[0] + '<span class="en">' + note[1] + "</span></p>" +
-                "</article>";
+                "</article>" +
+                '<section class="other-endings">' +
+                    "<h3>另外兩種終點 / The other two endings</h3>" +
+                    otherCards +
+                "</section>";
         }
 
         function renderReview() {
