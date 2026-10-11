@@ -223,7 +223,7 @@
                 <ul class="roads">
                     <li><span class="dot ok">✓</span><span><strong>健康人生</strong><span class="en">A healthy life</span></span></li>
                     <li><span class="dot metabolic">岔</span><span><strong>代謝症候群的日常</strong><span class="en">A metabolic detour</span></span></li>
-                    <li><span class="dot kidney">霧</span><span><strong>腎臟的下半場</strong><span class="en">A later kidney chapter</span></span></li>
+                    <li><span class="dot kidney">霧</span><span><strong>慢性腎臟病潛伏的下半場</strong><span class="en">A later chapter where chronic kidney disease stays quiet</span></span></li>
                 </ul>
                 <p class="note">答對沿著大路走，答錯會拐進岔路。看完路牌還走得回來。這是故事，不是診斷。</p>
                 <button type="button" id="start-btn" class="btn">開始這趟路 / START</button>
@@ -426,7 +426,7 @@
         const ENDING_LABEL = {
             healthy: "健康人生",
             metabolic: "代謝症候群的日常",
-            kidney: "腎臟下半場"
+            kidney: "慢性腎臟病潛伏的下半場"
         };
         const ENDING_IMAGE = {
             healthy: "assets/ending-healthy.jpg",
@@ -769,7 +769,7 @@
             const titles = {
                 healthy: ["你走到了健康人生", "You arrived at a healthy life."],
                 metabolic: ["這趟故事拐進了代謝症候群的日常", "The story turned into a day with metabolic syndrome."],
-                kidney: ["如果警訊一直被忽略，故事會走到腎臟的下半場", "If the warnings were ignored, the story would reach a later kidney chapter."]
+                kidney: ["如果警訊一直被忽略，故事會走到慢性腎臟病潛伏的下半場", "If the warnings were ignored, the story would reach a later chapter where chronic kidney disease stays quiet."]
             };
             const tone = toneCopy(endingKey, result.mWrong, result.kWrong);
             const note = saveMessage(save);
