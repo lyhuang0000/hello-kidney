@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>啟動代謝新生活：人生岔路闖關</title>
+    <style>
+        html { scroll-padding-top: 200px; }
+        *, *::before, *::after { box-sizing: border-box; }
+        [hidden] { display: none !important; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: #1f2937;
+            font-family: "Microsoft JhengHei", "PingFang TC", "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(160deg, #fef3c7 0%, #dcfce7 48%, #e0f2fe 100%);
+            line-height: 1.55;
+        }
+        button, input, select { font-family: inherit; }
+        button { touch-action: manipulation; }
+        :focus-visible { outline: 3px solid #059669; outline-offset: 3px; }
+        .wrap { max-width: 760px; margin: 0 auto; padding: 16px 16px 56px; }
+        .card {
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+        }
+        .en { display: block; margin-top: 4px; color: #4b5563; font-size: 0.86em; font-weight: 500; line-height: 1.45; }
+        .hero { overflow: hidden; border-radius: 24px 24px 0 0; background: #fff; }
+        .hero img { display: block; width: 100%; height: auto; max-height: 420px; object-fit: contain; }
+        .hero-fallback { padding: 64px 24px; text-align: center; background: #dcfce7; }
+        .hero-fallback h1 { margin: 0 0 8px; font-size: 40px; color: #166534; }
+        .panel { padding: 28px 22px 32px; text-align: center; }
+        .lead { margin: 0 0 18px; font-size: 22px; font-weight: 800; }
+        .roads { list-style: none; margin: 0 0 18px; padding: 0; display: grid; gap: 10px; text-align: left; }
+        .roads li {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 14px; border-radius: 16px; background: #f8fafc; border: 2px solid #e5e7eb;
+        }
+        .roads strong { display: block; font-size: 18px; }
+        .note { margin: 0 0 22px; color: #374151; font-size: 18px; }
+        .btn {
+            border: 0; cursor: pointer; border-radius: 999px;
+            font-weight: 800; font-size: 22px; padding: 16px 28px;
+            color: #fff; background: linear-gradient(90deg, #f59e0b, #ea580c);
+            box-shadow: 0 10px 20px rgba(234, 88, 12, 0.25);
+        }
+        .btn:hover { filter: brightness(1.05); }
+        .btn:active { transform: translateY(1px); }
+        .btn:disabled { opacity: 0.7; cursor: wait; }
+        .btn-green { background: linear-gradient(90deg, #10b981, #059669); box-shadow: 0 10px 20px rgba(5, 150, 105, 0.25); }
+        .btn-block { width: 100%; }
+        .btn-ghost {
+            display: block; margin: 8px auto 0; background: transparent; color: #047857;
+            box-shadow: none; text-decoration: underline; font-size: 20px;
+        }
+        .profile { padding: 28px 22px 32px; }
+        .profile h2 { margin: 0 0 8px; text-align: center; font-size: 32px; color: #047857; }
+        .profile .sub { margin: 0 0 22px; text-align: center; color: #4b5563; font-size: 18px; }
+        label { display: block; font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+        .req { color: #dc2626; }
+        .field { margin-bottom: 18px; }
+        .row { display: flex; gap: 10px; }
+        .row .grow { flex: 2; }
+        .row .side { flex: 1; }
+        input, select {
+            width: 100%; font-size: 18px; padding: 14px 16px; border-radius: 14px;
+            border: 2px solid #d1d5db; background: #fff; color: #111827;
+        }
+        input:focus, select:focus { border-color: #10b981; outline: none; box-shadow: 0 0 0 4px #d1fae5; }
+        .path-card {
+            position: sticky; top: 0; z-index: 5;
+            margin-bottom: 14px; padding: 10px 12px 8px;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(8px);
+            border: 1px solid #e5e7eb;
+        }
+        .path-track { position: relative; height: 104px; margin: 0 8px; }
+        .path-line {
+            position: absolute; left: 8%; right: 6%; top: 58px; height: 8px; border-radius: 999px;
+            background: linear-gradient(90deg, #bbf7d0, #fde68a 55%, #cbd5e1);
+        }
+        .stop { position: absolute; top: 44px; width: 44px; transform: translateX(-50%); text-align: center; }
+        .node {
+            width: 32px; height: 32px; margin: 0 auto; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; color: #6b7280; background: #fff; border: 3px solid #d1d5db;
+        }
+        .node.current { border-color: #059669; color: #047857; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25); }
+        .node.ok { background: #10b981; border-color: #047857; color: #fff; }
+        .node.metabolic { background: #f59e0b; border-color: #b45309; color: #fff; }
+        .node.kidney { background: #64748b; border-color: #334155; color: #fff; }
+        .node-label { display: block; margin-top: 6px; font-size: 14px; font-weight: 800; color: #374151; }
+        .walker {
+            position: absolute; top: 2px; width: 46px; z-index: 2;
+            transform: translateX(-50%);
+            transition: left 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.12));
+        }
+        .walker svg { display: block; width: 46px; height: 46px; }
+        .walker.walking { animation: bob 0.6s ease; }
+        @keyframes bob {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-6px); }
+        }
+        .path-status { margin: 0; text-align: center; font-weight: 800; font-size: 16px; }
+        .legend { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 6px 0 0; padding: 0; list-style: none; font-size: 14px; color: #374151; }
+        .legend li { display: flex; align-items: center; gap: 6px; }
+        .dot { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 11px; font-weight: 800; }
+        .dot.ok { background: #10b981; }
+        .dot.metabolic { background: #f59e0b; }
+        .dot.kidney { background: #64748b; }
+        .station { padding: 22px 18px 24px; }
+        .station.sky-ok { background: linear-gradient(#f0fdf4, #fff 90px); }
+        .station.sky-metabolic { background: linear-gradient(#fff7ed, #fff 90px); }
+        .station.sky-kidney { background: linear-gradient(#f1f5f9, #fff 90px); }
+        .who { margin: 0 0 6px; font-weight: 800; color: #047857; }
+        .station h2, .q-text, .feedback, #next-btn { scroll-margin-top: 196px; }
+        .station h2 { margin: 0; font-size: 30px; line-height: 1.25; }
+        .narrator { margin: 14px 0 0; font-size: 14px; font-weight: 800; letter-spacing: 0.04em; color: #b45309; }
+        .story { margin: 4px 0 0; font-size: 18px; }
+        .badge {
+            display: inline-block; margin-top: 16px; padding: 4px 10px; border-radius: 999px;
+            background: #fef3c7; color: #92400e; font-size: 14px; font-weight: 800;
+        }
+        .q-text { margin: 10px 0 16px; font-size: 26px; line-height: 1.35; }
+        .options { display: grid; gap: 10px; }
+        .option {
+            width: 100%; text-align: left; display: flex; gap: 12px; align-items: flex-start;
+            padding: 14px; border-radius: 16px; border: 2px solid #e5e7eb; background: #fff;
+            cursor: pointer; font-size: 18px; font-weight: 700; color: #1f2937;
+        }
+        .option:hover:not(:disabled) { border-color: #6ee7b7; transform: translateY(-1px); }
+        .option:disabled { cursor: default; }
+        .mark {
+            flex: 0 0 auto; width: 32px; height: 32px; border-radius: 50%;
+            display: inline-flex; align-items: center; justify-content: center;
+            background: #ecfdf5; color: #047857;
+        }
+        .option.is-wrong { border-color: #dc2626; background: #fef2f2; }
+        .option.is-correct, .option.is-key { border-color: #059669; background: #ecfdf5; }
+        .feedback { margin-top: 14px; padding: 14px; border-radius: 16px; border: 2px solid #d1d5db; }
+        .feedback.is-ok { background: #ecfdf5; border-color: #6ee7b7; }
+        .feedback.is-metabolic { background: #fff7ed; border-color: #fdba74; }
+        .feedback.is-kidney { background: #f8fafc; border-color: #94a3b8; }
+        .feedback-lead, .feedback-step { margin: 0 0 8px; font-weight: 800; }
+        .feedback-key, .feedback-explain { margin: 8px 0 0; }
+        .k { display: inline-block; margin-right: 8px; color: #1d4ed8; font-weight: 800; }
+        #next-btn { margin-top: 16px; }
+        .ending { padding: 22px 18px 8px; overflow: hidden; }
+        .scene { position: relative; height: 150px; border-radius: 20px; overflow: hidden; margin-bottom: 16px; }
+        .scene .cashew { position: absolute; left: 22%; bottom: 12px; width: 78px; height: 78px; }
+        .scene-healthy { background: linear-gradient(#7dd3fc, #bbf7d0 68%, #4ade80); }
+        .scene-metabolic { background: linear-gradient(#fdba74, #ffedd5 62%, #d6d3d1); }
+        .scene-kidney { background: linear-gradient(#64748b, #e2e8f0 60%, #f8fafc); }
+        .sun { position: absolute; width: 48px; height: 48px; border-radius: 50%; background: #fde047; top: 18px; right: 28px; box-shadow: 0 0 0 8px rgba(253, 224, 71, 0.35); }
+        .sofa { position: absolute; width: 108px; height: 36px; right: 18px; bottom: 18px; background: #9a3412; border-radius: 14px 14px 8px 8px; }
+        .sofa::before { content: ""; position: absolute; left: 10px; right: 10px; top: -18px; height: 24px; background: #c2410c; border-radius: 12px 12px 0 0; }
+        .door { position: absolute; width: 58px; height: 92px; right: 32px; bottom: 0; background: #1e293b; border-radius: 8px 8px 0 0; }
+        .door::after { content: ""; position: absolute; left: 10px; top: 10px; bottom: 0; width: 12px; background: #fef3c7; }
+        .end-kicker { margin: 0; font-weight: 800; letter-spacing: 0.08em; color: #6b7280; }
+        .ending h2 { margin: 4px 0; font-size: 34px; line-height: 1.25; }
+        .ending-healthy h2 { color: #166534; }
+        .ending-metabolic h2 { color: #9a3412; }
+        .ending-kidney h2 { color: #334155; }
+        .score-line { font-size: 28px; font-weight: 900; margin: 10px 0; }
+        .score-line span { color: #ea580c; }
+        .steps, .tone { font-size: 18px; }
+        .tips { margin: 8px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+        .tips li { padding: 12px 14px; border-radius: 14px; background: #f8fafc; }
+        .disclaimer, .save-note {
+            margin-top: 14px; padding: 12px 14px; border-radius: 14px; background: #fffbeb; color: #78350f; font-size: 16px;
+        }
+        .save-note { background: #ecfdf5; color: #065f46; }
+        .review-title { margin: 22px 4px 12px; font-size: 26px; }
+        .review {
+            padding: 16px; border-radius: 18px; margin-bottom: 12px; background: #fff; border: 2px solid #e5e7eb;
+        }
+        .review.ok { border-color: #86efac; }
+        .review.bad { border-color: #fca5a5; }
+        .review h3 { margin: 0 0 10px; font-size: 20px; }
+        .ans { margin: 6px 0; }
+        .pill { display: inline-block; margin-right: 6px; padding: 2px 8px; border-radius: 999px; background: #fef3c7; color: #92400e; font-size: 13px; }
+        .good { color: #166534; font-weight: 800; }
+        .bad-text { color: #b91c1c; font-weight: 800; text-decoration: line-through; }
+        .key-text { color: #1e3a8a; font-weight: 800; }
+        @media (max-width: 640px) {
+            .lead { font-size: 20px; }
+            .station h2, .ending h2 { font-size: 26px; }
+            .q-text { font-size: 22px; }
+            .row { flex-direction: column; }
+            .btn { font-size: 20px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .walker, .walker.walking { animation: none; transition: none; }
+        }
+    </style>
+</head>
+<body>
+    <main class="wrap">
+        <section id="step-0" class="step card">
+            <div class="hero">
+                <img id="banner" src="https://drive.google.com/thumbnail?id=1NAYJjAIpEMbAMM3AoyJ3BEDuDpa4OBSb&sz=w1000" alt="啟動代謝新生活">
+                <div id="banner-fallback" class="hero-fallback" hidden>
+                    <h1>啟動代謝新生活</h1>
+                    <p>A walk toward a healthier life</p>
+                </div>
+            </div>
+            <div class="panel">
+                <p class="lead">
+                    大腰果和小腰果帶你走一趟人生小路。
+                    <span class="en">Walk five stations with the cashews. Each answer is a step.</span>
+                </p>
+                <ul class="roads">
+                    <li><span class="dot ok">✓</span><span><strong>健康人生</strong><span class="en">A healthy life</span></span></li>
+                    <li><span class="dot metabolic">岔</span><span><strong>代謝症候群的日常</strong><span class="en">A metabolic detour</span></span></li>
+                    <li><span class="dot kidney">霧</span><span><strong>腎臟的下半場</strong><span class="en">A later kidney chapter</span></span></li>
+                </ul>
+                <p class="note">答對沿著大路走，答錯會拐進岔路。看完路牌還走得回來。這是故事，不是診斷。</p>
+                <button type="button" id="start-btn" class="btn">開始這趟路 / START</button>
+            </div>
+        </section>
+
+        <section id="step-1" class="step card profile" hidden>
+            <h2>出發前，先認識旅人</h2>
+            <p class="sub">Profile · 只用來稱呼你，並留下這次闖關紀錄</p>
+            <form id="info-form">
+                <div class="field">
+                    <label for="input-surname">姓氏與生理性別 / Surname &amp; gender <span class="req">*</span></label>
+                    <div class="row">
+                        <input class="grow" type="text" id="input-surname" required maxlength="20" autocomplete="family-name" placeholder="例如：林 / e.g., Lin">
+                        <select class="side" id="input-gender" required>
+                            <option value="" disabled selected>Gender</option>
+                            <option value="男">男 / Male</option>
+                            <option value="女">女 / Female</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="input-age">年齡 / Age <span class="req">*</span></label>
+                    <input type="number" id="input-age" required min="1" max="120" inputmode="numeric" placeholder="例如：35 / e.g., 35">
+                </div>
+                <button type="submit" class="btn btn-green btn-block">踏上小路 / Set off</button>
+            </form>
+        </section>
+
+        <section id="step-2" class="step" hidden>
+            <div class="path-card card">
+                <div class="path-track">
+                    <div class="path-line"></div>
+                    <div id="walker" class="walker" style="left:12%">
+                        <svg viewBox="0 0 64 64" aria-hidden="true">
+                            <ellipse cx="32" cy="40" rx="16" ry="18" fill="#f6c453" stroke="#b7791f" stroke-width="3"/>
+                            <ellipse cx="32" cy="42" rx="8" ry="11" fill="#fde68a"/>
+                            <circle cx="26" cy="38" r="2.2" fill="#3f2a1d"/>
+                            <circle cx="38" cy="38" r="2.2" fill="#3f2a1d"/>
+                            <path d="M26 46c2.2 3 9.8 3 12 0" fill="none" stroke="#3f2a1d" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M20 26c4-8 10-6 10 0" fill="none" stroke="#65a30d" stroke-width="3" stroke-linecap="round"/>
+                            <circle cx="48" cy="46" r="6.5" fill="#92400e"/>
+                            <circle cx="48" cy="46" r="2.4" fill="#fde68a"/>
+                        </svg>
+                    </div>
+                    <div class="stop"><span class="node" data-node="0">1</span><span class="node-label">腰</span></div>
+                    <div class="stop"><span class="node" data-node="1">2</span><span class="node-label">吃</span></div>
+                    <div class="stop"><span class="node" data-node="2">3</span><span class="node-label">動</span></div>
+                    <div class="stop"><span class="node" data-node="3">4</span><span class="node-label">橋</span></div>
+                    <div class="stop"><span class="node" data-node="4">5</span><span class="node-label">門</span></div>
+                </div>
+                <p id="path-status" class="path-status" aria-live="polite">答完這一題，小腰果就會留下腳印。</p>
+                <p id="path-status-en" class="en" style="text-align:center">Answer this station and the cashew will take a step.</p>
+                <ul class="legend">
+                    <li><span class="dot ok">✓</span>大路 Main road</li>
+                    <li><span class="dot metabolic">岔</span>代謝岔路 Detour</li>
+                    <li><span class="dot kidney">霧</span>護腎霧區 Mist</li>
+                </ul>
+            </div>
+            <div id="station" class="station card sky-ok"></div>
+        </section>
+
+        <section id="step-3" class="step" hidden>
+            <div id="ending"></div>
+            <div id="results"></div>
+            <button type="button" id="restart" class="btn btn-ghost">再走一次 / Walk again</button>
+        </section>
+    </main>
+    <noscript>請開啟瀏覽器的 JavaScript，才能進行闖關。</noscript>
+
+    <script>
+        // ★ 部署好新的 Apps Script 後，把下面網址整段換成新的、以 /exec 結尾的網址。
+        //   換過之後，試算表「填答紀錄」才會寫入「結局」。
+        //   還沒換之前，若舊網址仍在，分數等舊欄位還是會照舊收集，只是沒有結局。
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzobj7kDZ1cvwHYakZnivdTN2wIdn-4GAavh0gj0mkxMbTWFeK2cxKM-sIzD2rynXlkOw/exec";
+
+        const QUESTION_BANK = [
+            // --- 代謝症候群 (25題) ---
+            { category: "代謝", id: 1, text: "判斷內臟脂肪堆積的最重要指標是什麼？\nWhat is the most important indicator of visceral fat accumulation?", options: ["腰圍\nWaist circumference", "身高\nHeight", "體重\nWeight", "視力\nVision"], answer: "腰圍\nWaist circumference", explanation: "腰圍反映腹部肥胖，是偵測代謝症候群最簡易且重要的指標。\nWaist circumference reflects abdominal obesity, the simplest and most important indicator for detecting metabolic syndrome." },
+            { category: "代謝", id: 2, text: "成年男性理想腰圍應小於多少公分？\nWhat is the ideal waist circumference for adult men?", options: ["80公分\n80cm", "90公分\n90cm", "100公分\n100cm", "85公分\n85cm"], answer: "90公分\n90cm", explanation: "男性的理想腰圍應小於90公分，超過則代表腹部肥胖。\nIdeal waist circumference for men should be less than 90cm; exceeding this represents abdominal obesity." },
+            { category: "代謝", id: 3, text: "成年女性理想腰圍應小於多少公分？\nWhat is the ideal waist circumference for adult women?", options: ["80公分\n80cm", "90公分\n90cm", "70公分\n70cm", "85公分\n85cm"], answer: "80公分\n80cm", explanation: "女性的理想腰圍應小於80公分，以降低罹病風險。\nIdeal waist circumference for women should be less than 80cm to reduce disease risk." },
+            { category: "代謝", id: 4, text: "發生代謝症候群的核心原因之一是什麼？\nWhat is one of the core causes of metabolic syndrome?", options: ["胰島素阻抗\nInsulin Resistance", "鈣質攝取過多\nExcessive Calcium", "睡眠過多\nToo much sleep", "維生素D不足\nVitamin D deficiency"], answer: "胰島素阻抗\nInsulin Resistance", explanation: "胰島素阻抗導致血糖無法被有效利用，進而引發一系列代謝異常。\nInsulin resistance prevents glucose from being used effectively, triggering a series of metabolic abnormalities." },
+            { category: "代謝", id: 5, text: "代謝症候群判定標準中，空腹血糖異常的界線是多少？\nWhat is the abnormal fasting glucose threshold in metabolic syndrome criteria?", options: ["≥100 mg/dL", "≥126 mg/dL", "≥200 mg/dL", "≥80 mg/dL"], answer: "≥100 mg/dL", explanation: "空腹血糖大於等於100 mg/dL即屬於異常指標。\nFasting glucose ≥100 mg/dL is considered an abnormal indicator." },
+            { category: "代謝", id: 6, text: "代謝症候群血壓警告標準是多少？\nWhat is the blood pressure threshold for metabolic syndrome?", options: ["≥130/85 mmHg", "≥120/80 mmHg", "≥140/90 mmHg", "≥110/70 mmHg"], answer: "≥130/85 mmHg", explanation: "收縮壓≥130 mmHg 或舒張壓≥85 mmHg 即符合標準。\nSystolic BP ≥130 mmHg or Diastolic BP ≥85 mmHg meets the criteria." },
+            { category: "代謝", id: 7, text: "三酸甘油酯(TG)高於多少公絲屬於代謝症候群指標？\nWhat TG level is an indicator of metabolic syndrome?", options: ["≥150 mg/dL", "≥200 mg/dL", "≥100 mg/dL", "≥130 mg/dL"], answer: "≥150 mg/dL", explanation: "三酸甘油酯大於等於150 mg/dL即屬於偏高。\nTG ≥150 mg/dL is considered high." },
+            { category: "代謝", id: 8, text: "男性「好膽固醇(HDL-C)」低於多少公絲屬於異常？\nFor men, what level of HDL-C is considered abnormal?", options: ["<40 mg/dL", "<50 mg/dL", "<60 mg/dL", "<30 mg/dL"], answer: "<40 mg/dL", explanation: "男性好的膽固醇應高於40 mg/dL，低於此數值則不利血管健康。\nMen's HDL-C should be >40 mg/dL; lower than this is detrimental to vascular health." },
+            { category: "代謝", id: 9, text: "女性「好膽固醇(HDL-C)」低於多少公絲屬於異常？\nFor women, what level of HDL-C is considered abnormal?", options: ["<40 mg/dL", "<50 mg/dL", "<60 mg/dL", "<70 mg/dL"], answer: "<50 mg/dL", explanation: "女性生理結構不同，好的膽固醇應高於50 mg/dL。\nWomen's HDL-C should be >50 mg/dL." },
+            { category: "代謝", id: 10, text: "代謝症候群五項指標中，符合幾項即可判定？\nHow many out of the 5 criteria are needed to diagnose metabolic syndrome?", options: ["1項\n1 item", "2項\n2 items", "3項\n3 items", "5項\n5 items"], answer: "3項\n3 items", explanation: "五項指標中符合三項(含)以上，即診斷為代謝症候群。\nDiagnosed if 3 or more of the 5 criteria are met." },
+            { category: "代謝", id: 11, text: "有代謝症候群的人未來得糖尿病機率是一般人的幾倍？\nHow many times more likely is someone with metabolic syndrome to develop diabetes?", options: ["2倍\n2x", "4倍\n4x", "6倍\n6x", "10倍\n10x"], answer: "6倍\n6x", explanation: "代謝症候群是糖尿病的前兆，風險比一般人高出約6倍。\nMetabolic syndrome is a precursor to diabetes, with a 6-fold increased risk." },
+            { category: "代謝", id: 12, text: "預防代謝症候群建議每週累積多少分鐘中等運動？\nHow many minutes of moderate exercise per week are recommended?", options: ["30分鐘\n30 min", "60分鐘\n60 min", "150分鐘\n150 min", "300分鐘\n300 min"], answer: "150分鐘\n150 min", explanation: "建議每週至少進行150分鐘中等費力的身體活動。\nAt least 150 minutes of moderate-intensity activity per week is recommended." },
+            { category: "代謝", id: 13, text: "飲食建議原則「三低一高」不包含下列哪項？\nWhich is NOT part of the 'Three Lows, One High' dietary principle?", options: ["低油\nLow Oil", "低鹽\nLow Salt", "低纖\nLow Fiber", "低糖\nLow Sugar"], answer: "低纖\nLow Fiber", explanation: "正確應為「高纖」，而非低纖。\nThe correct principle is 'High Fiber', not low fiber." },
+            { category: "代謝", id: 14, text: "吸菸對代謝症候群有什麼負面影響？\nWhat is the negative impact of smoking on metabolic syndrome?", options: ["幫助消化\nAids digestion", "減少血壓\nReduces BP", "破壞血管內皮\nDamages blood vessel lining", "增加食慾\nIncreases appetite"], answer: "破壞血管內皮\nDamages blood vessel lining", explanation: "菸品尼古丁會破壞血管，增加動脈硬化與心血管疾病風險。\nNicotine in tobacco damages vessels, increasing the risk of atherosclerosis." },
+            { category: "代謝", id: 15, text: "長期高壓力對體重與代謝的影響是什麼？\nHow does long-term stress affect weight and metabolism?", options: ["讓人變瘦\nMakes you thin", "血糖上升脂肪囤積\nIncreases blood sugar and fat storage", "改善睡眠\nImproves sleep", "降低膽固醇\nLowers cholesterol"], answer: "血糖上升脂肪囤積\nIncreases blood sugar and fat storage", explanation: "壓力會導致壓力荷爾蒙分泌，造成血糖不穩與腹部脂肪堆積。\nStress causes hormones that destabilize blood sugar and lead to abdominal fat." },
+            { category: "代謝", id: 16, text: "成年民眾應多久量一次腰圍？\nHow often should adults measure their waist circumference?", options: ["每天\nDaily", "每週\nWeekly", "每月\nMonthly", "每年\nYearly"], answer: "每月\nMonthly", explanation: "定期(建議每月)監測腰圍能及早發現代謝異常。\nRegular monitoring (monthly recommended) helps detect metabolic issues early." },
+            { category: "代謝", id: 17, text: "預防代謝症候群五大絕招中，那一招強調規律測量？\nWhich step emphasizes regular measurement?", options: ["站起來動30\nStand up and move", "做檢查早發現\nRegular checkups", "不吸菸少喝酒\nNo smoking/drinking", "壓力去活力來\nStress management"], answer: "做檢查早發現\nRegular checkups", explanation: "「做檢查、早發現」包含定期檢測腰圍、血壓與生化指標。\n'Regular checkups' includes monitoring waist, BP, and biomarkers." },
+            { category: "代謝", id: 18, text: "對於外食族，哪種飲料最健康？\nWhich drink is healthiest for people eating out?", options: ["全糖綠茶\nFull-sugar green tea", "運動飲料\nSports drink", "白開水\nPlain water", "珍珠奶茶\nBubble tea"], answer: "白開水\nPlain water", explanation: "白開水最能補充水分且無糖分熱量負擔。\nPlain water provides hydration without sugar or calories." },
+            { category: "代謝", id: 19, text: "65歲以上長輩政府提供多久一次免費健檢？\nHow often does the government provide free checkups for seniors over 65?", options: ["每年一次\nOnce a year", "三年一次\nOnce every 3 years", "半年一次\nTwice a year", "五年一次\nOnce every 5 years"], answer: "每年一次\nOnce a year", explanation: "政府提供65歲以上長輩每年一次免費成人預防保健服務。\nThe government offers annual free checkups for seniors over 65." },
+            { category: "代謝", id: 20, text: "40歲以上未滿65歲民眾多久有一次免費健檢？\nHow often for those aged 40-64?", options: ["每年一次\nOnce a year", "三年一次\nOnce every 3 years", "兩年一次\nOnce every 2 years", "五年一次\nOnce every 5 years"], answer: "三年一次\nOnce every 3 years", explanation: "40歲至64歲民眾每三年可享有一次免費預防保健服務。\nThose aged 40-64 are eligible for a free checkup every three years." },
+            { category: "代謝", id: 21, text: "在辦公室如何增加活動量？\nHow to increase physical activity in the office?", options: ["多走樓梯\nTake the stairs", "坐電梯\nUse the elevator", "一直坐著\nStay seated", "請同事幫忙倒水\nAsk colleague for water"], answer: "多走樓梯\nTake the stairs", explanation: "利用爬樓梯、提早一站下車等方式累積日常運動量。\nAccumulate activity by using stairs or getting off the bus early." },
+            { category: "代謝", id: 22, text: "攝取過多「鈉」最直接影響哪項指標？\nExcessive sodium intake directly affects which indicator?", options: ["腰圍\nWaistline", "血壓\nBlood Pressure", "血糖\nBlood Glucose", "HDL-C"], answer: "血壓\nBlood Pressure", explanation: "高鈉飲食會導致體內水分滯留，增加血管阻力與血壓。\nHigh sodium causes water retention, increasing vascular resistance and BP." },
+            { category: "代謝", id: 23, text: "哪種脂肪危害最大與代謝症候群最相關？\nWhich fat is most dangerous and linked to metabolic syndrome?", options: ["皮下脂肪\nSubcutaneous fat", "內臟脂肪\nVisceral fat", "肌肉脂肪\nIntramuscular fat", "眼窩脂肪\nOrbital fat"], answer: "內臟脂肪\nVisceral fat", explanation: "內臟脂肪活性高，會釋放發炎因子干擾代謝功能。\nVisceral fat is highly active, releasing factors that disrupt metabolism." },
+            { category: "代謝", id: 24, text: "蛋白質來源建議優先序，何者最優？\nWhich protein source is the most recommended?", options: ["加工熱狗\nProcessed hotdog", "炸雞排\nFried chicken", "豆類魚類\nLegumes and fish", "五花肉\nPork belly"], answer: "豆類魚類\nLegumes and fish", explanation: "植物性蛋白與魚類油脂對血管較健康。\nPlant proteins and fish oils are healthier for blood vessels." },
+            { category: "代謝", id: 25, text: "澱粉類食物選擇哪種對代謝較好？\nWhich carbohydrate source is better for metabolism?", options: ["白米飯\nWhite rice", "白吐司\nWhite toast", "全穀根莖類(糙米)\nWhole grains (brown rice)", "蛋糕\nCake"], answer: "全穀根莖類(糙米)\nWhole grains (brown rice)", explanation: "全穀類含豐富纖維，能延緩血糖上升。\nWhole grains are rich in fiber, which slows the rise of blood sugar." },
+
+            // --- 慢性腎臟病 (25題) ---
+            { category: "腎臟", id: 26, text: "正常人體大約有幾顆腎臟？\nHow many kidneys does a normal human body have?", options: ["1顆\nOne", "2顆\nTwo", "3顆\nThree", "4顆\nFour"], answer: "2顆\nTwo", explanation: "人類通常有左右兩顆腎臟，位於後腰部。\nHumans typically have two kidneys, located in the lower back." },
+            { category: "腎臟", id: 27, text: "腎臟的基本構造與過濾單位稱為什麼？\nWhat is the basic functional unit of the kidney called?", options: ["神經元\nNeuron", "腎元\nNephron", "肺泡\nAlveoli", "血紅素\nHemoglobin"], answer: "腎元\nNephron", explanation: "腎元是過濾血液形成尿液的最小功能單位，每顆腎臟約有100萬個。\nThe nephron is the smallest unit that filters blood; each kidney has about 1 million." },
+            { category: "腎臟", id: 28, text: "腎臟除了排泄廢物，還負責維持什麼？\nBesides waste excretion, the kidneys maintain what?", options: ["體液恆定\nFluid homeostasis", "記憶力\nMemory", "聽力\nHearing", "智力\nIntelligence"], answer: "體液恆定\nFluid homeostasis", explanation: "腎臟調節水分、酸鹼度與電解質的平衡。\nThe kidneys regulate water, pH, and electrolyte balance." },
+            { category: "腎臟", id: 29, text: "腎臟分泌的「紅血球生成素」功能是什麼？\nWhat is the function of Erythropoietin (EPO) secreted by kidneys?", options: ["幫助消化\nAids digestion", "製造紅血球\nProduce red blood cells", "增強骨骼\nStrengthens bones", "降低血糖\nLowers blood sugar"], answer: "製造紅血球\nProduce red blood cells", explanation: "EPO刺激骨髓製造紅血球，腎功能不全常導致貧血。\nEPO stimulates marrow to make red cells; failure leads to anemia." },
+            { category: "腎臟", id: 30, text: "慢性腎臟病初期通常有什麼明顯症狀？\nWhat are the typical early symptoms of CKD?", options: ["劇烈疼痛\nSevere pain", "發高燒\nHigh fever", "幾乎無明顯症狀\nHardly any obvious symptoms", "皮膚發綠\nGreenish skin"], answer: "幾乎無明顯症狀\nHardly any obvious symptoms", explanation: "腎臟功能損失超過一半前，身體往往不會感到不適。\nObvious symptoms often don't appear until over half of kidney function is lost." },
+            { category: "腎臟", id: 31, text: "「護腎五字訣：泡、水、高、貧、倦」，「泡」指的是？\nIn the P-S-H-A-F code, what does 'P' (Bubble) stand for?", options: ["起水泡\nBlisters", "久不散的泡泡尿\nFoamy urine", "吐泡泡\nBubbling", "洗泡泡浴\nBubble bath"], answer: "久不散的泡泡尿\nFoamy urine", explanation: "尿液中含蛋白質會產生細小且持久不散的泡泡。\nProtein in urine creates small, persistent bubbles." },
+            { category: "腎臟", id: 32, text: "「護腎五字訣」中的「水」指的是？\nWhat does 'S' (Swelling) stand for?", options: ["多喝水\nDrink more water", "水腫\nEdema/Swelling", "流汗\nSweating", "溺水\nDrowning"], answer: "水腫\nEdema/Swelling", explanation: "腎臟排水功能障礙會導致下肢、眼瞼或臉部水腫。\nImpaired drainage leads to swelling in limbs, eyelids, or face." },
+            { category: "腎臟", id: 33, text: "「護腎五字訣」中的「高」指的是？\nWhat does 'H' (High) stand for?", options: ["身高\nHeight", "高血糖\nHigh sugar", "高血壓\nHigh blood pressure", "高負擔\nHigh load"], answer: "高血壓\nHigh blood pressure", explanation: "高血壓既是腎病的成因也是症狀，會互相惡化。\nHigh BP is both a cause and a symptom of kidney disease." },
+            { category: "腎臟", id: 34, text: "「護腎五字訣」中的「貧」指的是？\nWhat does 'A' (Anemia) stand for?", options: ["貧窮\nPoverty", "貧血\nAnemia", "貧瘠\nBarren", "貪心\nGreedy"], answer: "貧血\nAnemia", explanation: "腎臟無法產生足夠EPO，導致臉色蒼白、頭暈。\nThe lack of EPO causes low red cell counts, leading to paleness and dizziness." },
+            { category: "腎臟", id: 35, text: "「護腎五字訣」中的「倦」指的是？\nWhat does 'F' (Fatigue) stand for?", options: ["厭倦\nBoredom", "疲倦\nFatigue/Tiredness", "倦怠期\nSlump", "沒錢\nNo money"], answer: "疲倦\nFatigue/Tiredness", explanation: "代謝廢物累積與貧血會讓患者感到異常疲倦。\nAccumulated waste and anemia cause excessive tiredness." },
+            { category: "腎臟", id: 36, text: "評估腎功能最重要的抽血指標之一是？\nWhat is a key blood test indicator for kidney function?", options: ["肌酸酐\nCreatinine", "白血球\nWBC", "血糖\nGlucose", "血小板\nPlatelets"], answer: "肌酸酐\nCreatinine", explanation: "肌酸酐是肌肉代謝產物，主要經由腎臟排泄。\nCreatinine is a muscle byproduct excreted mainly by the kidneys." },
+            { category: "腎臟", id: 37, text: "健康檢查報告中的「eGFR」代表什麼？\nWhat does 'eGFR' stand for?", options: ["心率\nHeart rate", "腎絲球過濾率\nEstimated GFR", "肝功能指數\nLiver function", "體脂率\nBody fat"], answer: "腎絲球過濾率\nEstimated GFR", explanation: "eGFR數值越高代表過濾毒素的能力越強、功能越好。\nA higher eGFR indicates better filtration and kidney function." },
+            { category: "腎臟", id: 38, text: "尿液檢查若發現「尿蛋白」可能代表？\nWhat does protein in a urine test suggest?", options: ["吃太多肉\nToo much meat", "腎臟過濾膜受損\nKidney filter damage", "脫水\nDehydration", "發燒\nFever"], answer: "腎臟過濾膜受損\nKidney filter damage", explanation: "正常情況下大分子蛋白不應濾出，檢出代表過濾膜受傷。\nProteins shouldn't leak; their presence means the filters are damaged." },
+            { category: "腎臟", id: 39, text: "台灣洗腎最常見的第一名原因是？\nWhat is the leading cause of dialysis in Taiwan?", options: ["高血壓\nHigh BP", "糖尿病\nDiabetes", "痛風\nGout", "感冒\nCold"], answer: "糖尿病\nDiabetes", explanation: "長期高血糖會傷害腎臟微血管，引發糖尿病腎病變。\nLong-term high glucose damages microvessels in the kidneys." },
+            { category: "腎臟", id: 40, text: "護腎飲食「三少」是指？\nWhat are the 'Three Lows' of a kidney-friendly diet?", options: ["少油少鹽少糖\nLow oil/salt/sugar", "少吃少喝少睡\nLess eat/drink/sleep", "少動少鹽少油\nLess move/salt/oil", "少糖少鹽少魚\nLow sugar/salt/fish"], answer: "少油少鹽少糖\nLow oil/salt/sugar", explanation: "減少三高負擔是保護腎臟的核心飲食原則。\nReducing BP/BS/Fat is the core principle for kidney protection." },
+            { category: "腎臟", id: 41, text: "常吃哪種藥物最可能引發腎衰竭？\nWhich drugs are most likely to cause kidney failure?", options: ["維他命\nVitamins", "感冒糖漿\nCough syrup", "來路不明的偏方或止痛藥\nUnknown herbal cures or NSAIDs", "益生菌\nProbiotics"], answer: "來路不明的偏方或止痛藥\nUnknown herbal cures or NSAIDs", explanation: "非類固醇消炎止痛藥(NSAIDs)過度使用會損害腎血流。\nOveruse of NSAIDs harms blood flow to the kidneys." },
+            { category: "腎臟", id: 42, text: "慢性腎病患感冒時該如何用藥？\nHow should CKD patients take medicine for a cold?", options: ["買成藥\nOTC drugs", "喝薑湯\nGinger soup", "告知醫師自己有腎病\nTell doctor about kidney disease", "多吃止痛藥\nMore painkillers"], answer: "告知醫師自己有腎病\nTell doctor about kidney disease", explanation: "許多藥物需調整劑量或禁用，必須由專業醫師開藥。\nMany cold drugs need dose adjustment for CKD patients." },
+            { category: "腎臟", id: 43, text: "慢性腎臟病到了晚期常需要什麼治療？\nWhat treatment is needed for end-stage renal disease?", options: ["打針\nInjections", "透析(洗腎)\nDialysis", "整型\nSurgery", "推拿\nMassage"], answer: "透析(洗腎)\nDialysis", explanation: "當腎臟無法維持運作，需透過透析清除毒素與多餘水分。\nDialysis removes waste and water when kidneys fail." },
+            { category: "腎臟", id: 44, text: "晚期病患飲食需限制哪些礦物質？\nWhich minerals must ESRD patients limit?", options: ["磷與鉀\nPhosphorus and Potassium", "鐵與鈣\nIron and Calcium", "鋅與鎂\nZinc and Magnesium", "金與銀\nGold and Silver"], answer: "磷與鉀\nPhosphorus and Potassium", explanation: "磷、鉀累積會引發搔癢、骨頭病變甚至心跳停止。\nHigh levels of P or K can cause severe bone issues or cardiac arrest." },
+            { category: "腎臟", id: 45, text: "哪種水果對尿毒症病患有神經毒性禁食？\nWhich fruit has neurotoxicity for ESRD patients?", options: ["蘋果\nApple", "楊桃\nStarfruit", "芭樂\nGuava", "西瓜\nWatermelon"], answer: "楊桃\nStarfruit", explanation: "楊桃含有一種成分無法經由透析完全移除，會引發打嗝、抽搐。\nStarfruit contains a neurotoxin CKD patients cannot excrete." },
+            { category: "腎臟", id: 46, text: "嚴重水腫病患應如何攝取水分？\nHow should patients with severe edema manage water intake?", options: ["多喝水\nDrink lots", "口渴才喝\nOnly when thirsty", "遵醫囑限水\nLimit water per doctor's orders", "只喝果汁\nOnly juice"], answer: "遵醫囑限水\nLimit water per doctor's orders", explanation: "排水不良會加重心肺負擔，需計算每日排水量決定進水量。\nExcess water can stress the heart and lungs in CKD patients." },
+            { category: "腎臟", id: 47, text: "高血壓如何傷害腎臟？\nHow does hypertension damage the kidneys?", options: ["壓碎石頭\nCrushes stones", "破壞微血管\nDamages microvessels", "增加食慾\nBoosts appetite", "降低尿量\nLowers urine"], answer: "破壞微血管\nDamages microvessels", explanation: "高壓血流會損害腎臟內細小的血管與過濾構造。\nHigh-pressure flow damages the tiny vessels and filters in the kidney." },
+            { category: "腎臟", id: 48, text: "痛風過高會造成腎損傷的原因是什麼？\nWhat causes kidney damage in gout patients?", options: ["痛感太強\nExtreme pain", "尿酸結晶沉積\nUric acid crystal deposition", "關節不適\nJoint discomfort", "胃酸過多\nToo much gastric acid"], answer: "尿酸結晶沉積\nUric acid crystal deposition", explanation: "尿酸結晶會堆積在腎臟組織中引發慢性發炎與損傷。\nUric acid crystals can build up in kidney tissue, causing inflammation." },
+            { category: "腎臟", id: 49, text: "腎臟位於人體的哪一側？\nOn which side are the kidneys located?", options: ["左側\nLeft", "右側\nRight", "左右兩側\nBoth sides", "前方\nFront"], answer: "左右兩側\nBoth sides", explanation: "人體天生擁有左右各一顆腎臟。\nHumans are born with one kidney on each side." },
+            { category: "腎臟", id: 50, text: "關於護腎保健食品正確觀念是？\nWhat is the correct view on kidney health supplements?", options: ["多吃強身\nMore is better", "越貴越好\nPrice equals quality", "諮詢醫師不過量\nConsult MD, don't over-take", "有機即安全\nOrganic means safe"], answer: "諮詢醫師不過量\nConsult MD, don't over-take", explanation: "不當攝取保健品可能加速腎衰竭，服用前必先諮詢專業人士。\nIncorrect supplement use can speed up kidney failure; always consult a pro." }
+        ];
+
+        // 五站故事。pool 是這一站可能抽到的題號（對應題庫 id）。
+        // 男／女不會抽到另一性別的腰圍或好膽固醇切點。
+        const BEATS = [
+            {
+                titleZh: "第一站・腰圍岔路",
+                titleEn: "Station 1 · The fork",
+                storyZh: "小腰果站在分岔口。一邊是陽光步道，一邊是愈坐愈沉的沙發。大腰果指著腰間的皮帶，也指著五項指標的路牌：這條人生，常常從這裡開始分叉。",
+                storyEn: "The road often forks at the waistline and the five warning signs.",
+                correctZh: "小腰果踏上綠色步道。",
+                correctEn: "Onto the green path.",
+                wrongZh: "小腰果被岔路輕輕帶偏，路牌還亮著。",
+                wrongEn: "A small step onto the detour. The sign is still lit.",
+                pool: [1, 2, 3, 23, 16, 10, 6, 5, 7, 8, 9]
+            },
+            {
+                titleZh: "第二站・餐桌",
+                titleEn: "Station 2 · The table",
+                storyZh: "便利商店和餐桌都在這一站。大腰果把選擇放在你面前：喝什麼、吃什麼、鹽和油放多少，腳步就會跟著偏。",
+                storyEn: "Food and drink tug the path to one side or the other.",
+                correctZh: "小腰果把甜的、鹹的放回原位，沿大路繼續。",
+                correctEn: "The sweet and salty choices stay on the shelf.",
+                wrongZh: "小腰果拎著這一餐，拐進了旁邊的路。",
+                wrongEn: "This meal bends the path aside.",
+                pool: [13, 18, 22, 24, 25, 14, 15, 40]
+            },
+            {
+                titleZh: "第三站・抬起腳",
+                titleEn: "Station 3 · Take a step",
+                storyZh: "電梯旁邊就是樓梯，路上也有健檢站的箭頭。大腰果已經先走了兩階：動不動、查不查，會決定後面還看不看得到大路。",
+                storyEn: "Stairs and checkups keep the main road in sight.",
+                correctZh: "小腰果走上樓梯，呼吸輕了一點。",
+                correctEn: "Up the stairs, a little lighter.",
+                wrongZh: "小腰果在原地多站了一會兒，岔路又長出一截。",
+                wrongEn: "Standing still lets the detour grow.",
+                pool: [12, 21, 17, 19, 20]
+            },
+            {
+                titleZh: "第四站・通往腎臟的橋",
+                titleEn: "Station 4 · The bridge",
+                storyZh: "前面有一座橋，橋下是左右兩顆腎臟。大腰果放輕聲音：若血糖和血壓一直不被理會，故事會從這座橋走往下半場。先認識它，才保護得了它。",
+                storyEn: "Beyond this bridge, blood sugar and pressure can reach the kidneys.",
+                correctZh: "小腰果在橋這一側停好，還看得到回頭的方向。",
+                correctEn: "You can still see the way back from this side.",
+                wrongZh: "橋下起了霧，護腎的路變得不清楚。",
+                wrongEn: "Mist rises under the bridge.",
+                pool: [39, 47, 33, 48, 11, 4, 26, 49]
+            },
+            {
+                titleZh: "第五站・回頭的門",
+                titleEn: "Station 5 · The open door",
+                storyZh: "最後一站不是牆，是一扇還開著的門。門上寫著泡、水、高、貧、倦，也寫著抽血、驗尿、問醫師。大腰果扶著門把：早一點推開，下半場就還改得了。",
+                storyEn: "The last station is an open door: warning signs, tests, and a chance to turn back.",
+                correctZh: "小腰果推開門，光從門縫裡照出來。",
+                correctEn: "The door opens, and light comes through.",
+                wrongZh: "門還開著，只是霧比較濃。小腰果把這塊路牌記下了。",
+                wrongEn: "The door stays open. The sign is worth keeping.",
+                pool: [30, 31, 32, 34, 35, 36, 37, 38, 41, 42, 50, 43, 44, 45, 46, 27, 28, 29]
+            }
+        ];
+
+        const GENDER_BAN = { "男": [3, 9], "女": [2, 8] };
+        const NODE_LEFT = [12, 31, 50, 69, 88];
+        const ENDING_LABEL = {
+            healthy: "健康人生",
+            metabolic: "代謝症候群的日常",
+            kidney: "腎臟下半場"
+        };
+        const TIPS = {
+            healthy: [
+                ["每月量一次腰圍。男性小於 90 公分，女性小於 80 公分。", "Measure your waist monthly: under 90 cm for men, under 80 cm for women."],
+                ["每週至少 150 分鐘中等費力的活動，能走樓梯就少搭電梯。", "At least 150 minutes of moderate activity a week. Take the stairs when you can."],
+                ["三低一高：低油、低鹽、低糖、高纖。飲料以白開水為主。", "Low oil, low salt, low sugar, high fiber. Choose plain water."],
+                ["40 至 64 歲每三年、65 歲以上每年，可做免費成人預防保健。", "Free adult checkups: every 3 years from 40 to 64, and yearly from 65."]
+            ],
+            metabolic: [
+                ["腰圍、血壓、空腹血糖、三酸甘油酯、好膽固醇，五項符合三項（含）以上，就是代謝症候群。", "Metabolic syndrome means 3 or more of 5 signs: waist, blood pressure, fasting glucose, triglycerides, and HDL."],
+                ["界線：血壓 ≥130/85、空腹血糖 ≥100、三酸甘油酯 ≥150。好膽固醇男性低於 40、女性低於 50。", "Thresholds: BP ≥130/85, fasting glucose ≥100, TG ≥150. HDL below 40 in men or 50 in women."],
+                ["有代謝症候群的人，未來得糖尿病的機會約是一般人的 6 倍。台灣洗腎最常見的原因就是糖尿病。", "Diabetes risk is about 6 times higher. Diabetes is the leading cause of dialysis in Taiwan."],
+                ["回頭的路仍然是：腰圍、每週 150 分鐘、三低一高，以及定期檢查。", "The way back is the same: waist, 150 minutes a week, diet, and regular checks."]
+            ],
+            kidney: [
+                ["初期常常幾乎沒有症狀。五字訣：泡（久不散的泡泡尿）、水（水腫）、高（高血壓）、貧（貧血）、倦（疲倦）。", "Early kidney disease is often silent. Remember foamy urine, swelling, high blood pressure, anemia, and fatigue."],
+                ["抽血看肌酸酐與腎絲球過濾率（eGFR），驗尿看有沒有蛋白。eGFR 愈高，過濾能力愈好。", "Blood tests show creatinine and eGFR. Urine tests look for protein. A higher eGFR means better filtering."],
+                ["止痛藥、來路不明的偏方或保健品，先問醫師。看診時說自己有腎臟需要留意。", "Ask a doctor before painkillers, unknown remedies, or supplements. Tell the clinic you are protecting your kidneys."],
+                ["晚期才要限制磷、鉀，並避免楊桃。透析是腎臟無法運作時的治療。早一點推開這扇門，很多人走不到那一步。", "Phosphorus, potassium, and starfruit matter late in the disease. Dialysis is for kidneys that can no longer work. Many people never reach that door if they turn back early."]
+            ]
+        };
+
+        let userInfo = { surname: "", gender: "", age: "" };
+        let selectedQuestions = [];
+        let userAnswers = {};
+        let pathMarks = [null, null, null, null, null];
+        let stepIndex = 0;
+        let stationLocked = false;
+        let journeyClosed = false;
+        let pathReady = false;
+        let ignoreClicksUntil = 0;
+
+        function escapeHtml(str) {
+            return String(str == null ? "" : str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        function formatBilingual(str) {
+            if (!str) return "";
+            const parts = String(str).split("\n");
+            const zh = escapeHtml(parts[0]);
+            if (parts.length < 2) return zh;
+            return '<span class="bi">' + zh + '<span class="en">' + escapeHtml(parts.slice(1).join(" ")) + "</span></span>";
+        }
+
+        function personTitle() {
+            return userInfo.gender === "女" ? "小姐" : "先生";
+        }
+
+        function personTitleEn() {
+            return userInfo.gender === "女" ? "Ms." : "Mr.";
+        }
+
+        function isCorrect(q, given) {
+            if (Array.isArray(q.answer)) return q.answer.indexOf(given) !== -1;
+            return given === q.answer;
+        }
+
+        function questionById(id) {
+            for (let i = 0; i < QUESTION_BANK.length; i++) {
+                if (QUESTION_BANK[i].id === id) return QUESTION_BANK[i];
+            }
+            return null;
+        }
+
+        function goToStep(n) {
+            document.querySelectorAll(".step").forEach(function (el) { el.hidden = true; });
+            document.getElementById("step-" + n).hidden = false;
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function positionStops() {
+            document.querySelectorAll(".stop").forEach(function (stop, i) {
+                stop.style.left = NODE_LEFT[i] + "%";
+            });
+        }
+
+        function renderPath() {
+            const walker = document.getElementById("walker");
+            walker.style.left = NODE_LEFT[stepIndex] + "%";
+            if (pathReady) {
+                walker.classList.remove("walking");
+                void walker.offsetWidth;
+                walker.classList.add("walking");
+            }
+            pathReady = true;
+
+            document.querySelectorAll("[data-node]").forEach(function (node, i) {
+                const mark = pathMarks[i];
+                node.className = "node";
+                if (mark) node.classList.add(mark);
+                else if (i === stepIndex) node.classList.add("current");
+                node.textContent = mark === "ok" ? "✓" : mark === "metabolic" ? "岔" : mark === "kidney" ? "霧" : String(i + 1);
+            });
+
+            let ok = 0, metabolic = 0, kidney = 0;
+            pathMarks.forEach(function (mark) {
+                if (mark === "ok") ok++;
+                else if (mark === "metabolic") metabolic++;
+                else if (mark === "kidney") kidney++;
+            });
+            const status = document.getElementById("path-status");
+            const statusEn = document.getElementById("path-status-en");
+            if (ok + metabolic + kidney === 0) {
+                status.textContent = "答完這一題，小腰果就會留下腳印。";
+                statusEn.textContent = "Answer this station and the cashew will take a step.";
+            } else if (metabolic === 0 && kidney === 0) {
+                status.textContent = "小腰果還走在綠色大路上。";
+                statusEn.textContent = "Still on the green road.";
+            } else {
+                const bits = [];
+                const bitsEn = [];
+                if (ok) { bits.push("大路 " + ok + " 步"); bitsEn.push("main road " + ok); }
+                if (metabolic) { bits.push("代謝岔路 " + metabolic + " 步"); bitsEn.push("metabolic detour " + metabolic); }
+                if (kidney) { bits.push("護腎霧區 " + kidney + " 步"); bitsEn.push("kidney mist " + kidney); }
+                status.textContent = "目前足跡：" + bits.join("、") + "。";
+                statusEn.textContent = bitsEn.join(", ") + ".";
+            }
+        }
+
+        function categoryLabel(cat) {
+            return cat === "代謝" ? "代謝症候群 / Metabolic" : "護腎知識 / Kidney care";
+        }
+
+        function renderStation() {
+            const beat = BEATS[stepIndex];
+            const q = selectedQuestions[stepIndex];
+            const letters = ["A", "B", "C", "D"];
+            const options = q.options.map(function (opt, i) {
+                return '<button type="button" class="option" data-action="choose" data-index="' + i + '">' +
+                    '<span class="mark">' + letters[i] + '</span>' +
+                    '<span>' + formatBilingual(opt) + '</span></button>';
+            }).join("");
+            const nextLabel = stepIndex === 4 ? "走向終點 / Arrive" : "繼續往前 / Next step";
+            document.getElementById("station").className = "station card sky-ok";
+            document.getElementById("station").innerHTML =
+                '<p class="who">' + escapeHtml(userInfo.surname + " " + personTitle()) + " · 第 " + (stepIndex + 1) + " / 5 站</p>" +
+                '<h2 id="station-title" tabindex="-1">' + escapeHtml(beat.titleZh) + '<span class="en">' + escapeHtml(beat.titleEn) + '</span></h2>' +
+                '<p class="narrator">大腰果</p>' +
+                '<p class="story">' + escapeHtml(beat.storyZh) + '<span class="en">' + escapeHtml(beat.storyEn) + '</span></p>' +
+                '<span class="badge">' + categoryLabel(q.category) + '</span>' +
+                '<h3 class="q-text">' + formatBilingual(q.text) + '</h3>' +
+                '<div class="options">' + options + '</div>' +
+                '<div id="feedback" class="feedback" hidden></div>' +
+                '<button type="button" id="next-btn" class="btn btn-block" data-action="next" hidden>' + nextLabel + '</button>';
+        }
+
+        function pickQuestion(beat) {
+            const used = {};
+            selectedQuestions.forEach(function (q) { used[q.id] = true; });
+            const ban = GENDER_BAN[userInfo.gender] || [];
+            let ids = beat.pool.filter(function (id) { return !used[id] && ban.indexOf(id) === -1; });
+            if (!ids.length) ids = beat.pool.filter(function (id) { return !used[id]; });
+            if (!ids.length) ids = beat.pool.slice();
+            const id = ids[Math.floor(Math.random() * ids.length)];
+            const found = questionById(id);
+            if (!found) throw new Error("題庫缺少第 " + id + " 題");
+            return found;
+        }
+
+        function startJourney() {
+            selectedQuestions = [];
+            userAnswers = {};
+            pathMarks = [null, null, null, null, null];
+            stepIndex = 0;
+            stationLocked = false;
+            journeyClosed = false;
+            pathReady = false;
+            BEATS.forEach(function (beat) { selectedQuestions.push(pickQuestion(beat)); });
+            renderPath();
+            renderStation();
+            goToStep(2);
+        }
+
+        function lockAndGrade(index) {
+            if (stationLocked || journeyClosed || Date.now() < ignoreClicksUntil) return;
+            const q = selectedQuestions[stepIndex];
+            const chosen = q.options[index];
+            if (chosen == null) return;
+            stationLocked = true;
+            userAnswers[q.id] = chosen;
+            const ok = isCorrect(q, chosen);
+            pathMarks[stepIndex] = ok ? "ok" : (q.category === "代謝" ? "metabolic" : "kidney");
+
+            document.querySelectorAll("#station .option").forEach(function (btn, i) {
+                btn.disabled = true;
+                const key = isCorrect(q, q.options[i]);
+                if (i === index) btn.classList.add(ok ? "is-correct" : "is-wrong");
+                if (key) btn.classList.add("is-key");
+            });
+
+            const beat = BEATS[stepIndex];
+            const feedback = document.getElementById("feedback");
+            feedback.hidden = false;
+            feedback.className = "feedback " + (ok ? "is-ok" : (q.category === "代謝" ? "is-metabolic" : "is-kidney"));
+            const lead = ok ? "這一段，你看清楚了。" : "這一步先記住，路還走得回去。";
+            const leadEn = ok ? "You read this stretch clearly." : "Remember this step. The way back is still open.";
+            let answerBlock = "";
+            if (!ok) {
+                const correctText = Array.isArray(q.answer) ? q.answer.join("\n或 ") : q.answer;
+                answerBlock = '<p class="feedback-key"><span class="k">路牌上的答案</span>' + formatBilingual(correctText) + "</p>";
+            }
+            feedback.innerHTML =
+                '<p class="feedback-lead">' + lead + '<span class="en">' + leadEn + "</span></p>" +
+                '<p class="feedback-step">' + escapeHtml(ok ? beat.correctZh : beat.wrongZh) +
+                    '<span class="en">' + escapeHtml(ok ? beat.correctEn : beat.wrongEn) + "</span></p>" +
+                answerBlock +
+                '<p class="feedback-explain"><span class="k">詳解</span>' + formatBilingual(q.explanation) + "</p>";
+
+            const station = document.getElementById("station");
+            station.classList.remove("sky-ok", "sky-metabolic", "sky-kidney");
+            station.classList.add(ok ? "sky-ok" : (q.category === "代謝" ? "sky-metabolic" : "sky-kidney"));
+            const nextBtn = document.getElementById("next-btn");
+            nextBtn.hidden = false;
+            renderPath();
+            feedback.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+
+        function nextStation() {
+            if (!stationLocked || journeyClosed || Date.now() < ignoreClicksUntil) return;
+            if (stepIndex >= BEATS.length - 1) {
+                finishJourney();
+                return;
+            }
+            ignoreClicksUntil = Date.now() + 450;
+            stepIndex += 1;
+            stationLocked = false;
+            renderStation();
+            renderPath();
+            const title = document.getElementById("station-title");
+            if (title) title.focus();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function gradeAll() {
+            let score = 0, mC = 0, mT = 0, kC = 0, kT = 0;
+            const marks = selectedQuestions.map(function (q) {
+                const ok = isCorrect(q, userAnswers[q.id]);
+                if (q.category === "代謝") {
+                    mT++;
+                    if (ok) mC++;
+                } else {
+                    kT++;
+                    if (ok) kC++;
+                }
+                if (ok) score += 20;
+                return ok ? "ok" : (q.category === "代謝" ? "metabolic" : "kidney");
+            });
+            return { score: score, mC: mC, mT: mT, kC: kC, kT: kT, marks: marks, mWrong: mT - mC, kWrong: kT - kC };
+        }
+
+        function decideEnding(mWrong, kWrong) {
+            if (mWrong === 0 && kWrong === 0) return "healthy";
+            if (mWrong > kWrong) return "metabolic";
+            return "kidney";
+        }
+
+        function toneCopy(key, mWrong, kWrong) {
+            const wrong = mWrong + kWrong;
+            if (key === "healthy") {
+                return ["五步都在大路上。這些路牌可以留著，往後的日子也照著走。", "All five steps stayed on the main road. Keep these signs with you."];
+            }
+            if (wrong === 1) {
+                return ["五步裡只偏了一步。終點仍亮出這塊路牌，是想讓你記得怎麼走回來，不是在下判斷。", "Only one step turned aside. This sign is a reminder, not a verdict."];
+            }
+            if (mWrong > 0 && kWrong > 0) {
+                return ["代謝與腎臟兩條岔路都踩過。它們是相連的：血糖和血壓若一直放著，故事常常會走到腎臟。", "You stepped onto both detours. High blood sugar and pressure can lead on toward the kidneys."];
+            }
+            if (key === "metabolic") {
+                return ["代謝岔路走得比較多。五項指標符合三項以上，就是這條日常；人還走得回來。", "More steps went toward metabolic syndrome. Three of the five signs mark this road, and it can still be left."];
+            }
+            return ["護腎的霧區走得比較多。下面是「如果警訊一直被忽略」的劇本，不是在說你的未來。", "More steps entered the kidney mist. This is a story of ignored warning signs, not your future."];
+        }
+
+        function cleanStr(str) {
+            return String(str || "").replace(/\n/g, " / ");
+        }
+
+        async function sendResult(result, endingKey) {
+            const payload = {
+                surname: userInfo.surname,
+                gender: userInfo.gender,
+                age: userInfo.age,
+                quizType: "代謝" + result.mT + "題+腎臟" + result.kT + "題",
+                score: result.score,
+                metabolicRate: result.mC + "/" + result.mT,
+                kidneyRate: result.kC + "/" + result.kT,
+                ending: ENDING_LABEL[endingKey]
+            };
+            selectedQuestions.forEach(function (q, i) {
+                const n = i + 1;
+                const answer = Array.isArray(q.answer) ? q.answer.join(" 或 ") : q.answer;
+                payload["q" + n] = cleanStr("[" + q.category + "] " + q.text);
+                payload["a" + n] = cleanStr(userAnswers[q.id]);
+                payload["c" + n] = cleanStr(answer);
+            });
+
+            if (location.protocol === "file:") {
+                return { state: "file" };
+            }
+            if (!GOOGLE_SCRIPT_URL) return { state: "skip" };
+            const controller = new AbortController();
+            const timer = setTimeout(function () { controller.abort(); }, 8000);
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    body: JSON.stringify(payload),
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    signal: controller.signal
+                });
+                return { state: "sent" };
+            } catch (error) {
+                return { state: "failed" };
+            } finally {
+                clearTimeout(timer);
+            }
+        }
+
+        function saveMessage(save) {
+            if (!save || save.state === "file") {
+                return ["你現在是直接開啟檔案在試玩，結局看得到。把網頁放到網站上、並換上新的 Apps Script 網址後，才會寫進試算表的「結局」欄。", "This preview was opened as a file. The ending is here; the spreadsheet receives it after the page is hosted and the new script URL is pasted in."];
+            }
+            if (save.state === "failed") {
+                return ["結局已經算出來了。這次送出時網路沒有連上，試算表可能還沒有這一筆。", "The ending is ready. The network did not confirm this save, so the spreadsheet may not have this row yet."];
+            }
+            return ["這趟旅程已送出，感謝你走完。", "This journey has been sent. Thank you for walking it."];
+        }
+
+        function sceneArt(key) {
+            if (key === "healthy") return '<div class="sun"></div>';
+            if (key === "metabolic") return '<div class="sofa"></div>';
+            return '<div class="door"></div>';
+        }
+
+        function renderEnding(result, endingKey, save) {
+            const titles = {
+                healthy: ["你走到了健康人生", "You arrived at a healthy life."],
+                metabolic: ["這趟故事拐進了代謝症候群的日常", "The story turned into a day with metabolic syndrome."],
+                kidney: ["如果警訊一直被忽略，故事會走到腎臟的下半場", "If the warnings were ignored, the story would reach a later kidney chapter."]
+            };
+            const tone = toneCopy(endingKey, result.mWrong, result.kWrong);
+            const note = saveMessage(save);
+            const tips = TIPS[endingKey].map(function (tip) {
+                return "<li>" + escapeHtml(tip[0]) + '<span class="en">' + escapeHtml(tip[1]) + "</span></li>";
+            }).join("");
+            const okSteps = result.marks.filter(function (mark) { return mark === "ok"; }).length;
+            document.getElementById("ending").innerHTML =
+                '<article class="ending ending-' + endingKey + ' card">' +
+                    '<div class="scene scene-' + endingKey + '">' + sceneArt(endingKey) +
+                        '<svg class="cashew" viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="40" rx="16" ry="18" fill="#f6c453" stroke="#b7791f" stroke-width="3"/><ellipse cx="32" cy="42" rx="8" ry="11" fill="#fde68a"/><circle cx="26" cy="38" r="2.2" fill="#3f2a1d"/><circle cx="38" cy="38" r="2.2" fill="#3f2a1d"/><path d="M26 46c2.2 3 9.8 3 12 0" fill="none" stroke="#3f2a1d" stroke-width="2" stroke-linecap="round"/><path d="M20 26c4-8 10-6 10 0" fill="none" stroke="#65a30d" stroke-width="3" stroke-linecap="round"/></svg>' +
+                    "</div>" +
+                    '<p class="end-kicker">旅程終點 / The ending</p>' +
+                    "<h2>" + titles[endingKey][0] + '<span class="en">' + titles[endingKey][1] + "</span></h2>" +
+                    "<p><strong>" + escapeHtml(userInfo.surname + " " + personTitle()) + "</strong> / " + personTitleEn() + " " + escapeHtml(userInfo.surname) + "</p>" +
+                    '<p class="score-line"><span>' + result.score + '</span> 分 / pts · 答對 ' + (okSteps) + " / 5</p>" +
+                    '<p class="steps">五步裡面，大路 ' + okSteps + " 步、代謝岔路 " + result.mWrong + " 步、護腎霧區 " + result.kWrong + " 步。</p>" +
+                    '<p class="tone">' + tone[0] + '<span class="en">' + tone[1] + "</span></p>" +
+                    '<ul class="tips">' + tips + "</ul>" +
+                    '<p class="disclaimer">這是衛教故事，不是診斷，也不能取代就醫。若已有泡泡尿、水腫、血壓或血糖異常，請依醫師的安排追蹤。<span class="en">This is a health-education story, not a diagnosis. If you already have warning signs, follow your doctor’s plan.</span></p>' +
+                    '<p class="save-note">' + note[0] + '<span class="en">' + note[1] + "</span></p>" +
+                "</article>";
+        }
+
+        function renderReview() {
+            const blocks = selectedQuestions.map(function (q, index) {
+                const given = userAnswers[q.id];
+                const ok = isCorrect(q, given);
+                const correctText = Array.isArray(q.answer) ? q.answer.join("\n或 ") : q.answer;
+                return '<article class="review ' + (ok ? "ok" : "bad") + '">' +
+                    "<h3><span class=\"pill\">" + (q.category === "代謝" ? "代謝" : "護腎") + "</span>第 " + (index + 1) + " 站 " + formatBilingual(q.text) + "</h3>" +
+                    '<p class="ans">你的選擇：<span class="' + (ok ? "good" : "bad-text") + '">' + (given ? formatBilingual(given) : "未作答") + "</span></p>" +
+                    (ok ? "" : '<p class="ans">路牌答案：<span class="key-text">' + formatBilingual(correctText) + "</span></p>") +
+                    '<p class="ans"><span class="k">詳解</span>' + formatBilingual(q.explanation) + "</p>" +
+                "</article>";
+            }).join("");
+            document.getElementById("results").innerHTML = '<h2 class="review-title">五站路牌 / The five signs</h2>' + blocks;
+        }
+
+        async function finishJourney() {
+            if (journeyClosed) return;
+            journeyClosed = true;
+            const nextBtn = document.getElementById("next-btn");
+            if (nextBtn) {
+                nextBtn.disabled = true;
+                nextBtn.textContent = "正在記下這趟旅程…";
+            }
+            const result = gradeAll();
+            const endingKey = decideEnding(result.mWrong, result.kWrong);
+            const save = await sendResult(result, endingKey);
+            renderEnding(result, endingKey, save);
+            renderReview();
+            goToStep(3);
+        }
+
+        function restart() {
+            userInfo = { surname: "", gender: "", age: "" };
+            selectedQuestions = [];
+            userAnswers = {};
+            pathMarks = [null, null, null, null, null];
+            stepIndex = 0;
+            stationLocked = false;
+            journeyClosed = false;
+            pathReady = false;
+            document.getElementById("input-surname").value = "";
+            document.getElementById("input-gender").value = "";
+            document.getElementById("input-age").value = "";
+            document.getElementById("ending").innerHTML = "";
+            document.getElementById("results").innerHTML = "";
+            goToStep(0);
+        }
+
+        function onStationClick(event) {
+            const choose = event.target.closest("[data-action='choose']");
+            if (choose) {
+                lockAndGrade(Number(choose.getAttribute("data-index")));
+                return;
+            }
+            const next = event.target.closest("[data-action='next']");
+            if (next) nextStation();
+        }
+
+        function onProfile(event) {
+            event.preventDefault();
+            const surnameInput = document.getElementById("input-surname");
+            const surname = surnameInput.value.trim();
+            surnameInput.setCustomValidity(surname ? "" : "請填姓氏 / Please enter a surname");
+            if (!surnameInput.reportValidity()) return;
+            userInfo.surname = surname;
+            userInfo.gender = document.getElementById("input-gender").value;
+            userInfo.age = document.getElementById("input-age").value;
+            startJourney();
+        }
+
+        function bindBanner() {
+            const banner = document.getElementById("banner");
+            const fallback = document.getElementById("banner-fallback");
+            function showFallback() {
+                banner.hidden = true;
+                fallback.hidden = false;
+            }
+            banner.addEventListener("error", showFallback);
+            if (banner.complete && banner.naturalWidth === 0) showFallback();
+        }
+
+        document.getElementById("start-btn").addEventListener("click", function () { goToStep(1); });
+        document.getElementById("info-form").addEventListener("submit", onProfile);
+        document.getElementById("station").addEventListener("click", onStationClick);
+        document.getElementById("restart").addEventListener("click", restart);
+        bindBanner();
+        positionStops();
+        goToStep(0);
+    </script>
+</body>
+</html>
