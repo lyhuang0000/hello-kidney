@@ -423,6 +423,11 @@
             metabolic: "代謝症候群的日常",
             kidney: "腎臟下半場"
         };
+        const ENDING_IMAGE = {
+            healthy: "assets/ending-healthy.jpg",
+            metabolic: "assets/ending-metabolic.jpg",
+            kidney: "assets/ending-kidney.jpg"
+        };
         const TIPS = {
             healthy: [
                 ["每月量一次腰圍。男性小於 90 公分，女性小於 80 公分。", "Measure your waist monthly: under 90 cm for men, under 80 cm for women."],
@@ -755,12 +760,6 @@
             return ["這趟旅程已送出，感謝你走完。", "This journey has been sent. Thank you for walking it."];
         }
 
-        function sceneArt(key) {
-            if (key === "healthy") return '<div class="sun"></div>';
-            if (key === "metabolic") return '<div class="sofa"></div>';
-            return '<div class="door"></div>';
-        }
-
         function renderEnding(result, endingKey, save) {
             const titles = {
                 healthy: ["你走到了健康人生", "You arrived at a healthy life."],
@@ -775,9 +774,7 @@
             const okSteps = result.marks.filter(function (mark) { return mark === "ok"; }).length;
             document.getElementById("ending").innerHTML =
                 '<article class="ending ending-' + endingKey + ' card">' +
-                    '<div class="scene scene-' + endingKey + '">' + sceneArt(endingKey) +
-                        '<svg class="cashew" viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="40" rx="16" ry="18" fill="#f6c453" stroke="#b7791f" stroke-width="3"/><ellipse cx="32" cy="42" rx="8" ry="11" fill="#fde68a"/><circle cx="26" cy="38" r="2.2" fill="#3f2a1d"/><circle cx="38" cy="38" r="2.2" fill="#3f2a1d"/><path d="M26 46c2.2 3 9.8 3 12 0" fill="none" stroke="#3f2a1d" stroke-width="2" stroke-linecap="round"/><path d="M20 26c4-8 10-6 10 0" fill="none" stroke="#65a30d" stroke-width="3" stroke-linecap="round"/></svg>' +
-                    "</div>" +
+                    '<img class="scene-art" src="' + escapeHtml(ENDING_IMAGE[endingKey]) + '" alt="' + escapeHtml(titles[endingKey][0]) + '">' +
                     '<p class="end-kicker">旅程終點 / The ending</p>' +
                     "<h2>" + titles[endingKey][0] + '<span class="en">' + titles[endingKey][1] + "</span></h2>" +
                     "<p><strong>" + escapeHtml(userInfo.surname + " " + personTitle()) + "</strong> / " + personTitleEn() + " " + escapeHtml(userInfo.surname) + "</p>" +
